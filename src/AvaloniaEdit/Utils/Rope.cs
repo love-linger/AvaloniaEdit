@@ -246,6 +246,9 @@ namespace AvaloniaEdit.Utils
         /// <exception cref="ArgumentOutOfRangeException">index or length is outside the valid range.</exception>
         public void InsertRange(int index, T[] array, int arrayIndex, int count)
         {
+            if (array is not { Length: > 0 })
+                return;
+
             if (index < 0 || index > Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(index), index, "0 <= index <= " + Length.ToString(CultureInfo.InvariantCulture));
@@ -601,8 +604,8 @@ namespace AvaloniaEdit.Utils
 
         internal static void VerifyArrayWithRange(Span<T> array, int arrayIndex, int count)
         {
-            if (array == null)
-                throw new ArgumentNullException(nameof(array));
+            if (array.IsEmpty)
+               throw new ArgumentNullException(nameof(array));
             if (arrayIndex < 0 || arrayIndex > array.Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "0 <= arrayIndex <= " + array.Length.ToString(CultureInfo.InvariantCulture));

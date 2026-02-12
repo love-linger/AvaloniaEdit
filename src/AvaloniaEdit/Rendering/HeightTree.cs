@@ -655,8 +655,8 @@ namespace AvaloniaEdit.Rendering
 			if (node.Left != null && node.Right != null) {
 				if (node.Left.CollapsedSections != null && node.Right.CollapsedSections != null) {
 					var intersection = System.Linq.Enumerable.Intersect(node.Left.CollapsedSections, node.Right.CollapsedSections);
-					Debug.Assert(System.Linq.Enumerable.Count(intersection) == 0);
-				}
+                    Debug.Assert(System.Linq.Enumerable.Any(intersection));
+                }
 			}
 			if (node.IsDirectlyCollapsed) {
 				Debug.Assert(node.CollapsedSections.Count > 0);

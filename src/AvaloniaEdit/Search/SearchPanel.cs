@@ -114,7 +114,7 @@ namespace AvaloniaEdit.Search
         public bool IsReplaceMode
         {
             get => GetValue(IsReplaceModeProperty);
-            set => SetValue(IsReplaceModeProperty, _textEditor?.IsReadOnly ?? false ? false : value);
+            set => SetValue(IsReplaceModeProperty, value);
         }
 
         public static readonly StyledProperty<string> ReplacePatternProperty =
@@ -241,10 +241,14 @@ namespace AvaloniaEdit.Search
 
             CommandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Find, (sender, e) =>
             {
-                IsReplaceMode = false;
+                SetCurrentValue(IsReplaceModeProperty, false);
                 Reactivate();
             }));
-            CommandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Replace, (sender, e) => IsReplaceMode = true));
+            CommandBindings.Add(new RoutedCommandBinding(ApplicationCommands.Replace, (sender, e) =>
+            {
+                if (_textEditor is not { IsReadOnly: true })
+                    SetCurrentValue(IsReplaceModeProperty, true);
+            }));
             CommandBindings.Add(new RoutedCommandBinding(SearchCommands.ReplaceNext, (sender, e) => ReplaceNext(), (sender, e) => e.CanExecute = IsReplaceMode));
             CommandBindings.Add(new RoutedCommandBinding(SearchCommands.ReplaceAll, (sender, e) => ReplaceAll(), (sender, e) => e.CanExecute = IsReplaceMode));
 

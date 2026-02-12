@@ -759,7 +759,7 @@ namespace AvaloniaEdit.Editing
             for (var i = 0; i < buffer.Length; ++i)
             {
                 var c = buffer[i];
-                buffer[i] = char.IsUpper(c) ? char.ToLower(c) : char.ToUpper(c);
+                buffer[i] = char.IsUpper(c) ? char.ToLower(c, CultureInfo.CurrentCulture) : char.ToUpper(c, CultureInfo.CurrentCulture);
             }
             return new string(buffer);
         }
