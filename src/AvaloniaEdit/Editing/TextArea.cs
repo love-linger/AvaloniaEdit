@@ -171,6 +171,11 @@ namespace AvaloniaEdit.Editing
 
         #region InputHandler management
         /// <summary>
+        ///     Preedit Text
+        /// </summary>
+        public string PreeditText { get; private set; }
+
+        /// <summary>
         /// Gets the default input handler.
         /// </summary>
         /// <remarks><inheritdoc cref="ITextAreaInputHandler"/></remarks>
@@ -1232,7 +1237,7 @@ namespace AvaloniaEdit.Editing
 
             public override Visual TextViewVisual => _textArea;
 
-            public override bool SupportsPreedit => false;
+            public override bool SupportsPreedit => true;
 
             public override bool SupportsSurroundingText => true;
 
@@ -1305,7 +1310,11 @@ namespace AvaloniaEdit.Editing
 
             public override void SetPreeditText(string text)
             {
-
+                if (_textArea != null)
+                {
+                    _textArea.PreeditText = text;
+                    _textArea.TextView.InvalidateLayer(KnownLayer.Caret);
+                }
             }
         }
     }
