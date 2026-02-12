@@ -166,7 +166,7 @@ namespace AvaloniaEdit.Editing
 
         #region InputHandler management
         /// <summary>
-        ///     Preedit Text
+        /// Preedit Text
         /// </summary>
         public string PreeditText { get; private set; }
 

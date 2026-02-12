@@ -92,40 +92,34 @@ namespace AvaloniaEdit.Editing
         {
             base.Render(drawingContext);
 
-            var caretRect = _caretRectangle;
+            var relativeRect = new Rect(
+                _caretRectangle.X - TextView.HorizontalOffset,
+                _caretRectangle.Y - TextView.VerticalOffset,
+                _caretRectangle.Width,
+                _caretRectangle.Height);
 
-            if (!string.IsNullOrEmpty(_textArea.PreeditText)) {
-                var caretPos = new Point(
-                    caretRect.X - TextView.HorizontalOffset,
-                    caretRect.Y - TextView.VerticalOffset
-                );
-
+            if (!string.IsNullOrEmpty(_textArea.PreeditText))
+            {
                 var formattedText = new FormattedText(
                     _textArea.PreeditText,
                     CultureInfo.CurrentCulture,
                     _textArea.FlowDirection,
-                    new Typeface(_textArea.FontFamily, _textArea.FontStyle, _textArea.FontWeight,
-                        _textArea.FontStretch),
+                    new Typeface(_textArea.FontFamily, _textArea.FontStyle, _textArea.FontWeight, _textArea.FontStretch),
                     _textArea.FontSize,
-                    Brushes.Black
-                );
+                    Brushes.Black);
 
-                var textBounds = new Rect(
-                    caretPos.X,
-                    caretPos.Y,
-                    formattedText.Width,
-                    formattedText.Height
-                );
-                drawingContext.FillRectangle(Brushes.White, textBounds);
+                var preeditTextPos = new Point(Math.Max(relativeRect.X, 4), relativeRect.Y + (relativeRect.Height - formattedText.Height) * 0.5);
+                var border = new Rect(preeditTextPos.X - 3.5, relativeRect.Y, formattedText.Width + 8, relativeRect.Height);
+                var shadow = new BoxShadows(new() { Blur = 6, Color = Color.FromUInt32(0xA0000000) });
 
-                drawingContext.DrawText(formattedText, caretPos);
+                drawingContext.DrawRectangle(new SolidColorBrush(0xFFF0F0F0), null, border, 3, 3, shadow);
+                drawingContext.DrawText(formattedText, preeditTextPos);
 
-                caretRect = new Rect(
-                    caretRect.X + formattedText.Width,
-                    caretRect.Y,
-                    caretRect.Width,
-                    caretRect.Height
-                );
+                relativeRect = new Rect(
+                    preeditTextPos.X + formattedText.WidthIncludingTrailingWhitespace,
+                    relativeRect.Y,
+                    relativeRect.Width,
+                    relativeRect.Height);
             }
 
             if (_isVisible && _blink)
@@ -142,13 +136,7 @@ namespace AvaloniaEdit.Editing
                     }
                 }
 
-                var r = new Rect(
-                    caretRect.X - TextView.HorizontalOffset,
-                    caretRect.Y - TextView.VerticalOffset,
-                    caretRect.Width,
-                    caretRect.Height);
-
-                drawingContext.FillRectangle(caretBrush, PixelSnapHelpers.Round(r, PixelSnapHelpers.GetPixelSize(this)));
+                drawingContext.FillRectangle(caretBrush, PixelSnapHelpers.Round(relativeRect, PixelSnapHelpers.GetPixelSize(this)));
             }
         }
     }
