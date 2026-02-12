@@ -16,13 +16,14 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Threading;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Utils;
+using System;
+using System.Globalization;
 
 namespace AvaloniaEdit.Editing
 {
@@ -91,11 +92,45 @@ namespace AvaloniaEdit.Editing
         {
             base.Render(drawingContext);
 
+            var relativeRect = new Rect(
+                _caretRectangle.X - TextView.HorizontalOffset,
+                _caretRectangle.Y - TextView.VerticalOffset,
+                _caretRectangle.Width,
+                _caretRectangle.Height);
+
+            if (!string.IsNullOrEmpty(_textArea.PreeditText))
+            {
+                var formattedText = new FormattedText(
+                    _textArea.PreeditText,
+                    CultureInfo.CurrentCulture,
+                    _textArea.FlowDirection,
+                    new Typeface(_textArea.FontFamily, _textArea.FontStyle, _textArea.FontWeight, _textArea.FontStretch),
+                    _textArea.FontSize,
+                    Brushes.Black);
+
+                var preeditTextPos = new Point(Math.Max(relativeRect.X, 4), relativeRect.Y + (relativeRect.Height - formattedText.Height) * 0.5);
+                var border = new Rect(preeditTextPos.X - 3.5, relativeRect.Y, formattedText.Width + 8, relativeRect.Height);
+                var shadow = new BoxShadows(new() { Blur = 6, Color = Color.FromUInt32(0xA0000000) });
+
+                drawingContext.DrawRectangle(new SolidColorBrush(0xFFF0F0F0), null, border, 3, 3, shadow);
+                drawingContext.DrawText(formattedText, preeditTextPos);
+
+                relativeRect = new Rect(
+                    preeditTextPos.X + formattedText.WidthIncludingTrailingWhitespace + 0.5,
+                    relativeRect.Y,
+                    relativeRect.Width,
+                    relativeRect.Height);
+            }
+
             if (_isVisible && _blink)
             {
                 var caretBrush = CaretBrush ?? TextView.GetValue(TextBlock.ForegroundProperty);
 
-                if (_textArea.OverstrikeMode)
+                if (!string.IsNullOrEmpty(_textArea.PreeditText))
+                {
+                    caretBrush = Brushes.Black;
+                }
+                else if (_textArea.OverstrikeMode)
                 {
                     if (caretBrush is ISolidColorBrush scBrush)
                     {
@@ -105,12 +140,7 @@ namespace AvaloniaEdit.Editing
                     }
                 }
 
-                var r = new Rect(_caretRectangle.X - TextView.HorizontalOffset,
-                                  _caretRectangle.Y - TextView.VerticalOffset,
-                                  _caretRectangle.Width,
-                                  _caretRectangle.Height);
-
-                drawingContext.FillRectangle(caretBrush, PixelSnapHelpers.Round(r, PixelSnapHelpers.GetPixelSize(this)));
+                drawingContext.FillRectangle(caretBrush, PixelSnapHelpers.Round(relativeRect, PixelSnapHelpers.GetPixelSize(this)));
             }
         }
     }
