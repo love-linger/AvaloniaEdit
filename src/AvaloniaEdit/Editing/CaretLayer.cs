@@ -116,7 +116,7 @@ namespace AvaloniaEdit.Editing
                 drawingContext.DrawText(formattedText, preeditTextPos);
 
                 relativeRect = new Rect(
-                    preeditTextPos.X + formattedText.WidthIncludingTrailingWhitespace,
+                    preeditTextPos.X + formattedText.WidthIncludingTrailingWhitespace + 0.5,
                     relativeRect.Y,
                     relativeRect.Width,
                     relativeRect.Height);
@@ -126,7 +126,11 @@ namespace AvaloniaEdit.Editing
             {
                 var caretBrush = CaretBrush ?? TextView.GetValue(TextBlock.ForegroundProperty);
 
-                if (_textArea.OverstrikeMode)
+                if (!string.IsNullOrEmpty(_textArea.PreeditText))
+                {
+                    caretBrush = Brushes.Black;
+                }
+                else if (_textArea.OverstrikeMode)
                 {
                     if (caretBrush is ISolidColorBrush scBrush)
                     {
