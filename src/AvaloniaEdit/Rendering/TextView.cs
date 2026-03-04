@@ -917,6 +917,8 @@ namespace AvaloniaEdit.Rendering
             RemoveInlineObjectsNow();
 
             maxWidth += AdditionalHorizontalScrollAmount;
+            maxWidth += 5.0; // Caret border when it is at the end of some line
+
             var heightTreeHeight = DocumentHeight;
             var options = Options;
             double desiredHeight = Math.Min(availableSize.Height, heightTreeHeight);
