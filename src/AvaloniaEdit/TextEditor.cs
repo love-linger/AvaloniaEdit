@@ -215,11 +215,11 @@ namespace AvaloniaEdit
                 if (WordWrap)
                 {
                     _horizontalScrollBarVisibilityBck = HorizontalScrollBarVisibility;
-                    HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+                    SetCurrentValue(HorizontalScrollBarVisibilityProperty, ScrollBarVisibility.Disabled);
                 }
                 else
                 {
-                    HorizontalScrollBarVisibility = _horizontalScrollBarVisibilityBck;
+                    SetCurrentValue(HorizontalScrollBarVisibilityProperty, _horizontalScrollBarVisibilityBck);
                 }
             }
         }

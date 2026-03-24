@@ -67,7 +67,7 @@ namespace AvaloniaEdit.Editing
         {
             if (TextView == null)
             {
-                TextView = textView;
+                SetCurrentValue(TextViewProperty, textView);
                 _wasAutoAddedToTextView = true;
             }
             else if (TextView != textView)
@@ -80,7 +80,7 @@ namespace AvaloniaEdit.Editing
         {
             if (_wasAutoAddedToTextView && TextView == textView)
             {
-                TextView = null;
+                SetCurrentValue(TextViewProperty, null);
                 Debug.Assert(!_wasAutoAddedToTextView); // setting this.TextView should have unset this flag
             }
         }
