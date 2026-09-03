@@ -127,7 +127,9 @@ namespace AvaloniaEdit.Rendering
 				throw new ArgumentNullException("textView");
 			if (segment == null)
 				throw new ArgumentNullException("segment");
-			return GetRectsForSegmentImpl(textView, segment, extendToFullWidthAtLineEnd);
+            if (!textView.VisualLinesValid)
+                return Enumerable.Empty<Rect>();
+            return GetRectsForSegmentImpl(textView, segment, extendToFullWidthAtLineEnd);
 		}
 
 		private static IEnumerable<Rect> GetRectsForSegmentImpl(TextView textView, ISegment segment, bool extendToFullWidthAtLineEnd)
@@ -185,7 +187,9 @@ namespace AvaloniaEdit.Rendering
 				throw new ArgumentNullException("textView");
 			if (line == null)
 				throw new ArgumentNullException("line");
-			return ProcessTextLines(textView, line, startVc, endVc);
+            if (!textView.VisualLinesValid)
+                return Enumerable.Empty<Rect>();
+            return ProcessTextLines(textView, line, startVc, endVc);
 		}
 
 		private static IEnumerable<Rect> ProcessTextLines(TextView textView, VisualLine visualLine, int segmentStartVc, int segmentEndVc)

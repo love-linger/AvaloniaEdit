@@ -23,8 +23,6 @@ namespace AvaloniaEdit.Document
 {
     internal static class NewLineFinder
     {
-        private static readonly char[] Newline = { '\r', '\n' };
-
         internal static readonly string[] NewlineStrings = { "\r\n", "\r", "\n" };
 
         /// <summary>
@@ -33,17 +31,14 @@ namespace AvaloniaEdit.Document
         /// </summary>
         internal static SimpleSegment NextNewLine(string text, int offset)
         {
-            var pos = text.IndexOfAny(Newline, offset);
-            if (pos >= 0)
-            {
-                if (text[pos] == '\r')
-                {
-                    if (pos + 1 < text.Length && text[pos + 1] == '\n')
-                        return new SimpleSegment(pos, 2);
-                }
-                return new SimpleSegment(pos, 1);
-            }
-            return SimpleSegment.Invalid;
+            var pos = text.IndexOf('\n', offset);
+            if (pos < 0)
+                return SimpleSegment.Invalid;
+
+            if (pos > offset && text[pos - 1] == '\r')
+                return new SimpleSegment(pos - 1, 2);
+
+            return new SimpleSegment(pos, 1);
         }
 
         /// <summary>
@@ -53,17 +48,14 @@ namespace AvaloniaEdit.Document
         internal static SimpleSegment NextNewLine(ITextSource text, int offset)
         {
             var textLength = text.TextLength;
-            var pos = text.IndexOfAny(Newline, offset, textLength - offset);
-            if (pos >= 0)
-            {
-                if (text.GetCharAt(pos) == '\r')
-                {
-                    if (pos + 1 < textLength && text.GetCharAt(pos + 1) == '\n')
-                        return new SimpleSegment(pos, 2);
-                }
-                return new SimpleSegment(pos, 1);
-            }
-            return SimpleSegment.Invalid;
+            var pos = text.IndexOf('\n', offset, textLength - offset);
+            if (pos < 0)
+                return SimpleSegment.Invalid;
+
+            if (pos > offset && text.GetCharAt(pos - 1) == '\r')
+                return new SimpleSegment(pos - 1, 2);
+
+            return new SimpleSegment(pos, 1);
         }
     }
 
